@@ -1,6 +1,7 @@
 import pandas as pd
 import contractions
 import re
+import math
 
 
 with open('negation_items.xlsx', 'rb') as file:
@@ -149,3 +150,11 @@ df_templates = create_templates(df)
 df_templates['sentence'] = df_templates.apply(lambda row: replace_predicate(row['sentence'], row['cw']), axis=1)
 
 df.to_pickle('examples.pkl')
+
+def counter_cosine_sim(sen, ques):
+    """ this calculates cosine similarity between two sentences in a pair."""
+    terms = set(sen).union(ques)
+    dotprod = sum(sen.get(k, 0) * ques.get(k, 0) for k in terms)
+    magA = math.sqrt(sum(sen.get(k, 0) ** 2 for k in terms))
+    magB = math.sqrt(sum(ques.get(k, 0) ** 2 for k in terms))
+    return dotprod / (magA * magB)
